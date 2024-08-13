@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pokemon App</string>
+    <string name="title_home" translatable="false">Poke API</string>
+    <string name="lbl_input">Buscar aqui...</string>
+</resources>
