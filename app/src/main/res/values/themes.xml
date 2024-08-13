@@ -7,4 +7,7 @@
 
     <style name="Theme.PokeDexApp" parent="Base.Theme.PokeDexApp" />
 
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorBackground">@android:color/white</item>
+    </style>
 </resources>

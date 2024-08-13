@@ -1,5 +1,7 @@
 package com.pokedex.app
 
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var pokemonAdapter: PokemonAdapter
     private val pokemonList = mutableListOf<PokemonItem>()
+    private var receiver: NetworkChangeReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +40,18 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         pokemonAdapter = PokemonAdapter(pokemonList) { item -> onPokemonClick(item) }
         recyclerView.adapter = pokemonAdapter
+        receiver = NetworkChangeReceiver(this)
 
         getDataInitial()
+
     }
 
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(receiver, filter)
+
+    }
     // Metodo para obtener el listado de pokemons
     private fun getDataInitial() {
         val service = PokemonRetrofit.makeService()
