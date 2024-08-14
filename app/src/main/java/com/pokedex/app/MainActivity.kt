@@ -1,5 +1,6 @@
 package com.pokedex.app
 
+import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
     // Metodo para obtener el listado de pokemons
     private fun getDataInitial() {
-        val service = PokemonRetrofit.makeService()
+        val service = PokemonRetrofit.getAllsPokemon()
         service.listPokemon(20, 0).enqueue(object : Callback<PokemonResult> {
             override fun onResponse(call: Call<PokemonResult>, response: Response<PokemonResult>) {
                 if (response.isSuccessful) {
@@ -75,7 +76,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun onPokemonClick(pokemon: PokemonItem) {
-        // Maneja el clic en el Pokémon aquí
-        Log.d("MainActivity", "Clicked on: ${pokemon.name}")
+        var intent = Intent(this, PokemonDetails::class.java)
+        intent.putExtra("pokemon", pokemon.url)
+        startActivity(intent)
     }
 }
