@@ -28,6 +28,7 @@ class PokemonDetails : AppCompatActivity() {
             insets
         }
         getDetails()
+
     }
 
     fun getDetails() {
@@ -50,6 +51,19 @@ class PokemonDetails : AppCompatActivity() {
                                 .into(imageView)
                             var textViewTitle: TextView = findViewById(R.id.lblName)
                             textViewTitle.text = pokemon.name.capitalize()
+
+                            // Atributos de los pokemons
+                            for ( i in 0 until pokemon.stats.size) {
+
+                                val attributeId = resources.getIdentifier("attribute_${i + 1}", "id", packageName)
+                                val textView: TextView = findViewById(attributeId)
+                                textView.text = "${pokemon.stats[i].stat.name.capitalize()}"
+                                val valueId = resources.getIdentifier("value_${i + 1}", "id", packageName)
+                                val valueView: TextView = findViewById(valueId)
+                                valueView.text = "${pokemon.stats[i].base_stat}"
+
+                            }
+
                         } else {
                             Toast.makeText(
                                 this@PokemonDetails,

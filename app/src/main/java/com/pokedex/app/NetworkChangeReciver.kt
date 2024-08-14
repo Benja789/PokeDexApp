@@ -24,7 +24,7 @@ class NetworkChangeReceiver(private val activity: Activity) : BroadcastReceiver(
             val builder = AlertDialog.Builder(activity, R.style.AlertDialogCustom)
             builder.setTitle("Error de conexión").setCancelable(false)
             val message = TextView(activity)
-            message.text = "No posees conexion a interntet, estamos intentando reconectarnos..."
+            message.text = "Error de conexion, por favor verifica tu conexión a internet"
             message.gravity = Gravity.CENTER
             message.setTextColor(Color.BLACK)
             message.textSize = 18f
