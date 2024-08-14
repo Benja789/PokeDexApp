@@ -1,11 +1,12 @@
 package com.pokedex.app
 
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -41,27 +42,38 @@ class PokemonDetails : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val pokemon = response.body()
                         if (pokemon != null) {
+
+                            // Seteo de la informacion de los pokemons
                             var imageView: ImageView = findViewById(R.id.imgPokemon)
                             Glide.with(this@PokemonDetails)
                                 .load(pokemon.sprites.front_default)
                                 .into(imageView)
-                            Log.d("PokemonDetails", "Pokemon encontrado: ${pokemon?.sprites?.front_default}")
+                            var textViewTitle: TextView = findViewById(R.id.lblName)
+                            textViewTitle.text = pokemon.name.capitalize()
                         } else {
-                            Log.d("PokemonDetails", "No se ha encontrado el pokemon")
+                            Toast.makeText(
+                                this@PokemonDetails,
+                                "No se ha encontrado el pokemon",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                     }
                 }
 
                 override fun onFailure(call: Call<PokemonX>, t: Throwable) {
-                    Log.d("PokemonDetails", "Error al obtener el pokemon")
+                    Toast.makeText(
+                        this@PokemonDetails,
+                        "Error al obtener los datos del pokemon",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
         } else {
-            Log.d("PokemonDetails", "No se ha encontrado el pokemon")
+            Toast.makeText(this, "No se ha encontrado el pokemon", Toast.LENGTH_SHORT).show()
         }
     }
-
-    fun backBtn() {
+    fun backBtn(view: View) {
         finish()
     }
 

@@ -1,10 +1,11 @@
 package com.pokedex.app
 
+import RepeatedTask
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -19,12 +20,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var pokemonAdapter: PokemonAdapter
     private val pokemonList = mutableListOf<PokemonItem>()
     private var receiver: NetworkChangeReceiver? = null
+    private lateinit var task: RepeatedTask
+
+    private var pokemonTotal = 15
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +46,11 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = pokemonAdapter
         receiver = NetworkChangeReceiver(this)
 
-        getDataInitial()
-
+        task = RepeatedTask(10000)
+        task.executeTask = {
+            getDataInitial()
+        }
+        task.start()
     }
 
     override fun onStart() {
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     // Metodo para obtener el listado de pokemons
     private fun getDataInitial() {
         val service = PokemonRetrofit.getAllsPokemon()
-        service.listPokemon(20, 0).enqueue(object : Callback<PokemonResult> {
+        service.listPokemon(pokemonTotal, 0).enqueue(object : Callback<PokemonResult> {
             override fun onResponse(call: Call<PokemonResult>, response: Response<PokemonResult>) {
                 if (response.isSuccessful) {
                     val pokemonResult = response.body()
@@ -64,12 +70,16 @@ class MainActivity : AppCompatActivity() {
                         pokemonList.addAll(it.results)
                         pokemonAdapter.notifyDataSetChanged()
                     }
+                    if ( pokemonTotal > 15 ) {
+                        Toast.makeText(this@MainActivity, "Se han cargado ${pokemonTotal} pokemons", Toast.LENGTH_SHORT).show()
+                    }
+                    pokemonTotal += 10
                 } else {
-                    Log.e("MainActivity", "Error: ${response.code()}")
+                    Toast.makeText(this@MainActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<PokemonResult>, t: Throwable) {
-                Log.e("MainActivity", "Failure: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: No se logro obtener el listado de pokemons", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -78,6 +88,7 @@ class MainActivity : AppCompatActivity() {
     private fun onPokemonClick(pokemon: PokemonItem) {
         var intent = Intent(this, PokemonDetails::class.java)
         intent.putExtra("pokemon", pokemon.url)
+        task.stop()
         startActivity(intent)
     }
 }
